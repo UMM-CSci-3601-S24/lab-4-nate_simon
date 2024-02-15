@@ -59,7 +59,7 @@ export class TodoService {
       if (filters.owner) {
         httpParams = httpParams.set(this.ownerKey, filters.owner)
       }
-
+    }
     // Send the HTTP GET request with the given URL and parameters.
     // That will return the desired `Observable<User[]>`.
     return this.httpClient.get<Todo[]>(this.todoUrl, {
@@ -88,9 +88,9 @@ export class TodoService {
     }
 
     return filteredTodos;
+
+
   }
-
-
 
 
 }
