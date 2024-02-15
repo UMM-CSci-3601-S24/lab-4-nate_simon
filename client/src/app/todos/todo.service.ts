@@ -51,7 +51,7 @@ export class TodoService {
    *  from the server after a possibly substprivate readonly ownerKey = 'owner';ntial delay (because we're
    *  contacting a remote server over the Internet).
    */
-  getTodos(filters?: { owner?: string; status?: string; category?: string; }): Observable<Todo[]> {
+  getTodos(filters?: { owner?: string; status?: string; category?: string; body?: string;}): Observable<Todo[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
@@ -81,13 +81,19 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string; status?: string; category?: string}): Todo[] {
+  filterTodos(todos: Todo[], filters: { owner?: string; status?: string; category?: string; body?: string;}): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
     if (filters.owner) {
       filters.owner = filters.owner.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    }
+
+    // Filter by body
+    if (filters.body) {
+      filters.body = filters.body.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.body.toLowerCase().indexOf(filters.body) !== -1);
     }
 
     //Filter by category

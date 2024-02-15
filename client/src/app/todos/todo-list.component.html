@@ -17,12 +17,12 @@
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field> -->
 
-          <mat-form-field class="input-field">
+          <!-- <mat-form-field class="input-field">
             <mat-label>Status</mat-label>
             <input matInput data-test="todoStatusInput" placeholder="Filter by status"
               [(ngModel)]="todoStatus" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
-          </mat-form-field>
+          </mat-form-field> -->
 
           <mat-form-field class="input-field">
             <mat-label>Category</mat-label>
@@ -30,6 +30,15 @@
               [(ngModel)]="todoCategory" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
+
+
+          <mat-form-field class="input-field">
+            <mat-label>Body</mat-label>
+            <input matInput data-test="todoBodyInput" placeholder="Filter by body"
+              [(ngModel)]="todoBody" (input)="updateFilter()">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field>
+
 
 
 
