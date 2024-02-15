@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -19,6 +19,7 @@ export class TodoService {
   // private readonly roleKey = 'role';
   // private readonly ageKey = 'age';
   // private readonly companyKey = 'company';
+     private readonly ownerKey = 'owner';
 
   // The private `HttpClient` is *injected* into the service
   // by the Angular framework. This allows the system to create
@@ -47,16 +48,22 @@ export class TodoService {
    *  from the server after a possibly substantial delay (because we're
    *  contacting a remote server over the Internet).
    */
-  getTodos(): Observable<Todo[]> {
+  getTodos(filters?: { owner?: string }): Observable<Todo[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
 
 
+    let httpParams: HttpParams = new HttpParams();
+    if (filters) {
+      if (filters.owner) {
+        httpParams = httpParams.set(this.ownerKey, filters.owner)
+      }
+
     // Send the HTTP GET request with the given URL and parameters.
     // That will return the desired `Observable<User[]>`.
     return this.httpClient.get<Todo[]>(this.todoUrl, {
-
+      params: httpParams,
     });
   }
 
@@ -70,6 +77,20 @@ export class TodoService {
     // The input to get could also be written as (this.userUrl + '/' + id)
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
+
+  filterTodos(todos: Todo[], filters: { owner?: string}): Todo[] {
+    let filteredTodos = todos;
+
+    // Filter by owner
+    if (filters.owner) {
+      filters.owner = filters.owner.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    }
+
+    return filteredTodos;
+  }
+
+
 
 
 }
