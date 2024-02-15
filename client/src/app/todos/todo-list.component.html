@@ -10,15 +10,41 @@
         <div class="flex-row gap-8 flex-wrap">
           <!-- Examples of filtering in Angular -->
 
-          <mat-form-field class="input-field">
+          <!-- <mat-form-field class="input-field">
             <mat-label>Owner</mat-label>
-            <input matInput data-test="todoOwnerInput" placeholder="Filter by name"
+            <input matInput data-test="todoOwnerInput" placeholder="Filter by owner"
               [(ngModel)]="todoOwner" (input)="updateFilter()">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field> -->
+
+          <mat-form-field class="input-field">
+            <mat-label>Status</mat-label>
+            <input matInput data-test="todoStatusInput" placeholder="Filter by status"
+              [(ngModel)]="todoStatus" (input)="updateFilter()">
+            <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Category</mat-label>
+            <input matInput data-test="todoCategoryInput" placeholder="Filter by category"
+              [(ngModel)]="todoCategory" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
 
+
+
         </div>
+
+
+
+        <mat-form-field class="input-field">
+          <mat-label>Owner</mat-label>
+          <input matInput data-test="todoOwnerInput" placeholder="Filter by todos"
+            min="0" max="200" [(ngModel)]="todoOwner" (input)="getTodosFromServer()">
+          <mat-hint>Filtered on server</mat-hint>
+        </mat-form-field>
+
 
         <!-- <div class="flex-row gap-8 flex-wrap">
           <!-- Examples of filtering on the server -->
@@ -29,6 +55,8 @@
               min="0" max="200" [(ngModel)]="todoAge" (input)="getTodosFromServer()">
             <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
+
+
 
           <mat-form-field class="input-field">
             <mat-label>Role</mat-label>

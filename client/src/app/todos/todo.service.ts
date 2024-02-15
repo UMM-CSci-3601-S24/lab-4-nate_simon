@@ -20,6 +20,9 @@ export class TodoService {
   // private readonly ageKey = 'age';
   // private readonly companyKey = 'company';
      private readonly ownerKey = 'owner';
+     private readonly CategoryKey = 'category';
+     private readonly statusKey = 'status';
+
 
   // The private `HttpClient` is *injected* into the service
   // by the Angular framework. This allows the system to create
@@ -45,10 +48,10 @@ export class TodoService {
    * @returns an `Observable` of an array of `Users`. Wrapping the array
    *  in an `Observable` means that other bits of of code can `subscribe` to
    *  the result (the `Observable`) and get the results that come back
-   *  from the server after a possibly substantial delay (because we're
+   *  from the server after a possibly substprivate readonly ownerKey = 'owner';ntial delay (because we're
    *  contacting a remote server over the Internet).
    */
-  getTodos(filters?: { owner?: string }): Observable<Todo[]> {
+  getTodos(filters?: { owner?: string; status?: string; category?: string; }): Observable<Todo[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
@@ -78,7 +81,7 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string}): Todo[] {
+  filterTodos(todos: Todo[], filters: { owner?: string; status?: string; category?: string}): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
@@ -86,6 +89,18 @@ export class TodoService {
       filters.owner = filters.owner.toLowerCase();
       filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
     }
+
+    //Filter by category
+    if (filters.category) {
+      filters.category = filters.category.toLowerCase();
+      filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
+    }
+
+    // Filter by status
+    // if (filters.status) {
+    //   filters.status = filters.status.toLowerCase();
+    //   filteredTodos = filteredTodos.filter(todo => todo.status.toLowerCase().indexOf(filters.status) !== -1);
+    // }
 
     return filteredTodos;
 
