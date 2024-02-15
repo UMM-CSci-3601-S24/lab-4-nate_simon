@@ -44,7 +44,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
 
   public todoBody: string;
   public todoCategory: string;
-  public todoStatus: string;
+  public todoStatus: boolean;
   public todoOwner: string;
 
   public viewType: 'card' | 'list' = 'card';
@@ -80,6 +80,8 @@ export class TodoListComponent implements OnInit, OnDestroy  {
       owner: this.todoOwner,
       status: this.todoStatus,
       category: this.todoCategory,
+      body: this.todoBody,
+
 
 
       // public todoBody: string;

@@ -13,7 +13,7 @@
           <!-- <mat-form-field class="input-field">
             <mat-label>Owner</mat-label>
             <input matInput data-test="todoOwnerInput" placeholder="Filter by owner"
-              [(ngModel)]="todoOwner" (input)="updateFilter()">
+              [(ngModel</div>)]="todoOwner" (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field> -->
 
@@ -26,38 +26,44 @@
 
           <mat-form-field class="input-field">
             <mat-label>Category</mat-label>
-            <input matInput data-test="todoCategoryInput" placeholder="Filter by category"
-              [(ngModel)]="todoCategory" (input)="updateFilter()">
+            <input matInput data-test="todoCategoryInput" placeholder="Filter by category" [(ngModel)]="todoCategory"
+              (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
 
           <mat-form-field class="input-field">
             <mat-label>Body</mat-label>
-            <input matInput data-test="todoBodyInput" placeholder="Filter by body"
-              [(ngModel)]="todoBody" (input)="updateFilter()">
+            <input matInput data-test="todoBodyInput" placeholder="Filter by body" [(ngModel)]="todoBody"
+              (input)="updateFilter()">
             <mat-hint>Filtered on client</mat-hint>
+          </mat-form-field>
+
+          </div>
+          
+          <mat-form-field class="input-field">
+            <mat-label>Status</mat-label>
+            <mat-select (selectionChange)="getTodosFromServer()" [(ngModel)]="todoStatus" data-test="todoStatusSelect">
+              <mat-option>--</mat-option>
+              <mat-option [value]="true">True</mat-option>
+              <mat-option [value]="false">False</mat-option>
+            </mat-select>
+            <mat-hint>Filtered on server</mat-hint>
           </mat-form-field>
 
 
 
-
-
-        </div>
-
-
-
-        <mat-form-field class="input-field">
-          <mat-label>Owner</mat-label>
-          <input matInput data-test="todoOwnerInput" placeholder="Filter by todos"
-            min="0" max="200" [(ngModel)]="todoOwner" (input)="getTodosFromServer()">
-          <mat-hint>Filtered on server</mat-hint>
-        </mat-form-field>
+          <mat-form-field class="input-field">
+            <mat-label>Owner</mat-label>
+            <input matInput data-test="todoOwnerInput" placeholder="Filter by todos" min="0" max="200"
+              [(ngModel)]="todoOwner" (input)="getTodosFromServer()">
+            <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
 
 
         <!-- <div class="flex-row gap-8 flex-wrap">
           <!-- Examples of filtering on the server -->
-          <!--
+        <!--
           <mat-form-field class="input-field">
             <mat-label>Age</mat-label>
             <input matInput data-test="todoAgeInput" type="number" placeholder="Filter by age"
@@ -67,7 +73,7 @@
 
 
 
-          <mat-form-field class="input-field">
+          <mat-</div>form-field class="input-field">
             <mat-label>Role</mat-label>
             <mat-select (selectionChange)="getTodosFromServer()" [(ngModel)]="todoRole" data-test="todoRoleSelect">
               <mat-option>--</mat-option>
@@ -88,61 +94,63 @@
             </mat-radio-group>
           </div> -->
 
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+
+
+<div class="flex-row">
+  @if (serverFilteredTodos) {
+  <div class="flex-1">
+    <!-- Switch between card and list view based on the viewType variable, set above in the mar-radio-group -->
+    <div>
+      @switch (viewType) {
+      <!-- Card grid view -->
+      @case ('card') {
+      <div class="todo-cards-container flex-row gap-8 flex-wrap">
+        @for (todo of filteredTodos; track todo._id) {
+        <app-todo-card [simple]="true" class="todo-card" [todo]="todo"></app-todo-card>
+        }
+      </div>
+      }
+      <!-- List view -->
+      @case ('list') {
+      <mat-card>
+        <mat-card-content>
+          <mat-nav-list class="todo-nav-list">
+            <h3 mat-subheader>Todos</h3>
+            @for (todo of this.filteredTodos; track todo._id) {
+            <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item">
+
+              <!-- <span matListItemTitle mat-line class="todo-list-name"> {{todo.name}} </span>
+                        <span matListItemLine class="todo-list-role"> {{todo.role}} </span> -->
+            </a>
+            }
+          </mat-nav-list>
         </mat-card-content>
       </mat-card>
+      }
+      }
     </div>
   </div>
-
-  <div class="flex-row">
-    @if (serverFilteredTodos) {
-      <div class="flex-1" >
-        <!-- Switch between card and list view based on the viewType variable, set above in the mar-radio-group -->
-        <div>
-          @switch (viewType) {
-            <!-- Card grid view -->
-            @case ('card') {
-              <div class="todo-cards-container flex-row gap-8 flex-wrap">
-                @for (todo of filteredTodos; track todo._id) {
-                  <app-todo-card [simple]="true" class="todo-card" [todo]="todo" ></app-todo-card>
-                }
-              </div>
-            }
-            <!-- List view -->
-            @case ('list') {
-              <mat-card>
-                <mat-card-content>
-                  <mat-nav-list class="todo-nav-list">
-                    <h3 mat-subheader>Todos</h3>
-                    @for (todo of this.filteredTodos; track todo._id) {
-                      <a mat-list-item [routerLink]="['/todos', todo._id]" class="todo-list-item">
-
-                        <!-- <span matListItemTitle mat-line class="todo-list-name"> {{todo.name}} </span>
-                        <span matListItemLine class="todo-list-role"> {{todo.role}} </span> -->
-                      </a>
-                    }
-                  </mat-nav-list>
-                </mat-card-content>
-              </mat-card>
-            }
-          }
-        </div>
-      </div>
-    } @else {
-      <div class="flex-1" class="todo-error">
-        <mat-error>
-          There was a problem loading the todos. Possibly the server is down or perhaps there are network
-          issues.
-        </mat-error>
-        <mat-error>
-          Please wait a bit and try again or start the server.
-        </mat-error>
-      </div>
-    }
-
-    <!-- Maybe this should be a pop-up instead of just a text message? Not sure. -->
-
+  } @else {
+  <div class="flex-1" class="todo-error">
+    <mat-error>
+      There was a problem loading the todos. Possibly the server is down or perhaps there are network
+      issues.
+    </mat-error>
+    <mat-error>
+      Please wait a bit and try again or start the server.
+    </mat-error>
   </div>
+  }
 
-  <button mat-fab class="add-todo-fab" matTooltip="Add Todo" matTooltipPosition="left" routerLink="/todos/new" data-test="addTodoButton">
-    <mat-icon class="md-24" aria-label="Add Todo">add</mat-icon>
-  </button>
+  <!-- Maybe this should be a pop-up instead of just a text message? Not sure. -->
+
+</div>
+
+<button mat-fab class="add-todo-fab" matTooltip="Add Todo" matTooltipPosition="left" routerLink="/todos/new"
+  data-test="addTodoButton">
+  <mat-icon class="md-24" aria-label="Add Todo">add</mat-icon>
+</button>
