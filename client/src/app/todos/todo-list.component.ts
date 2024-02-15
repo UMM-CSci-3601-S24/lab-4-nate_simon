@@ -44,7 +44,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
 
   public todoBody: string;
   public todoCategory: string;
-  public todoStatus: boolean;
+  public todoStatus: string;
   public todoOwner: string;
 
   public viewType: 'card' | 'list' = 'card';
@@ -78,6 +78,8 @@ export class TodoListComponent implements OnInit, OnDestroy  {
     this.todoService.getTodos({
 
       owner: this.todoOwner,
+      status: this.todoStatus,
+      category: this.todoCategory,
 
 
       // public todoBody: string;
@@ -121,7 +123,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
    */
   public updateFilter(): void {
     this.filteredTodos = this.todoService.filterTodos(
-      this.serverFilteredTodos, { });
+      this.serverFilteredTodos, {owner: this.todoOwner, status: this.todoStatus, category: this.todoCategory, body: this.todoBody});
   }
 
   /**
