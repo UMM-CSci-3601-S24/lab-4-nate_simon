@@ -6,6 +6,8 @@ import { Todo  } from './todo';
 
 import { map } from 'rxjs/operators';
 
+
+
 /**
  * Service that provides the interface for getting information
  * about `Users` from the server.
@@ -16,6 +18,7 @@ import { map } from 'rxjs/operators';
 export class TodoService {
   // The URL for the users part of the server API.
   readonly todoUrl: string = `${environment.apiUrl}todos`;
+
 
   // private readonly roleKey = 'role';
   // private readonly ageKey = 'age';
@@ -120,9 +123,9 @@ export class TodoService {
 
   }
 
-  addTodo(newUser: Partial<Todo>): Observable<string> {
+  addTodo(newTodo: Partial<Todo>): Observable<string> {
     // Send post request to add a new user with the user data as the body.
-    return this.httpClient.post<{owner: string}>(this.todoUrl, newUser).pipe(map(res => res.owner));
+    return this.httpClient.post<{id: string}>(this.todoUrl, newTodo).pipe(map(res => res.id));
   }
 
 }

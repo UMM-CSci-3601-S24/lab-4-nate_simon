@@ -76,10 +76,8 @@ export class AddTodoComponent {
       },
     ])),
 
-  status: new FormControl<boolean>(false, Validators.compose([
-    Validators.required,
-    Validators.pattern('^(False|True)$'),
-  ])),
+
+    status: new FormControl<boolean>(null, Validators.required),
   });
   // We don't need a special validator just for our app here, but there is a default one for email.
   // We will require the email, though.
@@ -142,13 +140,13 @@ getErrorMessage(owner: keyof typeof this.addTodoValidationMessages): string {
 
 submitForm() {
   this.todoService.addTodo(this.addTodoForm.value).subscribe({
-    next: (newOwner) => {
+    next: (newId) => {
       this.snackBar.open(
         `Added todo ${this.addTodoForm.value.owner}`,
         null,
         { duration: 2000 }
       );
-      this.router.navigate(['/todos/', newOwner]);
+      this.router.navigate(['/todo/', newId]);
     },
     error: err => {
       this.snackBar.open(
