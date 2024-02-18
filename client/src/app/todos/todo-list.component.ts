@@ -46,12 +46,15 @@ export class TodoListComponent implements OnInit, OnDestroy  {
   public todoCategory: string;
   public todoStatus: boolean;
   public todoOwner: string;
+  public limit: number;
+
 
   public viewType: 'card' | 'list' = 'card';
 
 
   errMsg = '';
   private ngUnsubscribe = new Subject<void>();
+  todoLimit: number;
 
 
   /**
@@ -81,6 +84,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
       status: this.todoStatus,
       category: this.todoCategory,
       body: this.todoBody,
+
 
 
 
@@ -125,7 +129,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
    */
   public updateFilter(): void {
     this.filteredTodos = this.todoService.filterTodos(
-      this.serverFilteredTodos, {owner: this.todoOwner, status: this.todoStatus, category: this.todoCategory, body: this.todoBody});
+      this.serverFilteredTodos, {owner: this.todoOwner, status: this.todoStatus, category: this.todoCategory, body: this.todoBody, limit: this.todoLimit});
   }
 
   /**
