@@ -32,6 +32,9 @@ import umm3601.Controller;
 
 
   static final String SORT_ORDER_KEY = "sortorder";
+public static String CATEGORY_KEY = "category";
+public static Boolean STATUS_KEY = false | true;
+public static String BODY_KEY  = "body";
 
 
   private final JacksonMongoCollection<Todo> todoCollection;
