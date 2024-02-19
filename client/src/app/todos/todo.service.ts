@@ -5,6 +5,10 @@ import { environment } from '../../environments/environment';
 import { Todo  } from './todo';
 
 
+import { map } from 'rxjs/operators';
+
+
+
 /**
  * Service that provides the interface for getting information
  * about `Users` from the server.
@@ -15,6 +19,7 @@ import { Todo  } from './todo';
 export class TodoService {
   // The URL for the users part of the server API.
   readonly todoUrl: string = `${environment.apiUrl}todos`;
+
 
   // private readonly roleKey = 'role';
   // private readonly ageKey = 'age';
@@ -51,7 +56,7 @@ export class TodoService {
    *  from the server after a possibly substprivate readonly ownerKey = 'owner';ntial delay (because we're
    *  contacting a remote server over the Internet).
    */
-  getTodos(filters?: { owner?: string; status?: string; category?: string; body?: string;}): Observable<Todo[]> {
+  getTodos(filters?: { owner?: string; status?: boolean; category?: string; body?: string;}): Observable<Todo[]> {
     // `HttpParams` is essentially just a map used to hold key-value
     // pairs that are then encoded as "?key1=value1&key2=value2&…" in
     // the URL when we make the call to `.get()` below.
@@ -81,7 +86,9 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
-  filterTodos(todos: Todo[], filters: { owner?: string; status?: string; category?: string; body?: string;}): Todo[] {
+  filterTodos(todos: Todo[], filters: {
+    limit: number; owner?: string; status?: boolean; category?: string; body?: string;
+    }): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
@@ -102,16 +109,20 @@ export class TodoService {
       filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
     }
 
-    // Filter by status
-    // if (filters.status) {
-    //   filters.status = filters.status.toLowerCase();
-    //   filteredTodos = filteredTodos.filter(todo => todo.status.toLowerCase().indexOf(filters.status) !== -1);
-    // }
+
+    // Filter by limit
+    if (filters.limit) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
+    }
 
     return filteredTodos;
 
 
   }
 
+  addTodo(newTodo: Partial<Todo>): Observable<string> {
+    // Send post request to add a new user with the user data as the body.
+    return this.httpClient.post<{id: string}>(this.todoUrl, newTodo).pipe(map(res => res.id));
+  }
 
 }
