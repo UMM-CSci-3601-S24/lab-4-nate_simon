@@ -4,7 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 import umm3601.todo.TodoController;
-import umm3601.todo.UserController;
+import umm3601.user.UserController;
 
 public class Main {
 
