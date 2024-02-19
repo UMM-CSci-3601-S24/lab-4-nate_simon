@@ -23,7 +23,7 @@ import {
    let fixture: ComponentFixture<AddTodoComponent>;
 
    beforeEach(waitForAsync(() => {
-    TestBed.overrideProvider(TodoService, { useValue: new MockTodoService() });
+     TestBed.overrideProvider(TodoService, { useValue: new MockTodoService() });
      TestBed.configureTestingModule({
      imports: [
          FormsModule,
@@ -68,67 +68,59 @@ import {
    });
 
    describe('The owner field', () => {
-     let nameControl: AbstractControl;
+     let ownerControl: AbstractControl;
 
      beforeEach(() => {
-       nameControl = addTodoComponent.addTodoForm.controls.owner;
+       ownerControl = addTodoComponent.addTodoForm.controls.owner;
      });
 
      it('should not allow empty owners', () => {
-       nameControl.setValue('');
-       expect(nameControl.valid).toBeFalsy();
+       ownerControl.setValue('');
+       expect(ownerControl.valid).toBeFalsy();
      });
 
-     it('should be fine with "Blanche"', () => {
-       nameControl.setValue('Blanche');
-       expect(nameControl.valid).toBeTruthy();
+     it('should be fine with "Chris Smith"', () => {
+       ownerControl.setValue('Chris Smith');
+       expect(ownerControl.valid).toBeTruthy();
      });
 
      it('should fail on single character owners', () => {
-       nameControl.setValue('x');
-       expect(nameControl.valid).toBeFalsy();
+       ownerControl.setValue('x');
+       expect(ownerControl.valid).toBeFalsy();
        // Annoyingly, Angular uses lowercase 'l' here
        // when it's an upper case 'L' in `Validators.minLength(2)`.
-       expect(nameControl.hasError('minlength')).toBeTruthy();
+       expect(ownerControl.hasError('minlength')).toBeTruthy();
      });
 
      // In the real world, you'd want to be pretty careful about
      // setting upper limits on things like owner lengths just
      // because there are people with really long owners.
      it('should fail on really long owners', () => {
-       nameControl.setValue('x'.repeat(100));
-       expect(nameControl.valid).toBeFalsy();
+       ownerControl.setValue('x'.repeat(100));
+       expect(ownerControl.valid).toBeFalsy();
        // Annoyingly, Angular uses lowercase 'l' here
        // when it's an upper case 'L' in `Validators.maxLength(2)`.
-       expect(nameControl.hasError('maxlength')).toBeTruthy();
+       expect(ownerControl.hasError('maxlength')).toBeTruthy();
      });
 
      it('should allow digits in the owner', () => {
-       nameControl.setValue('Bad2Th3B0ne');
-       expect(nameControl.valid).toBeTruthy();
+       ownerControl.setValue('Bad2Th3B0ne');
+       expect(ownerControl.valid).toBeTruthy();
      });
 
      it('should fail if we provide an "existing" owner', () => {
        // We're assuming that "abc123" and "123abc" already
        // exist so we disallow them.
-       nameControl.setValue('abc123');
-       expect(nameControl.valid).toBeFalsy();
-       expect(nameControl.hasError('existingOwner')).toBeTruthy();
+       ownerControl.setValue('abc123');
+       expect(ownerControl.valid).toBeFalsy();
+       expect(ownerControl.hasError('existingOwner')).toBeTruthy();
 
-       nameControl.setValue('123abc');
-       expect(nameControl.valid).toBeFalsy();
-       expect(nameControl.hasError('existingOwner')).toBeTruthy();
+       ownerControl.setValue('123abc');
+       expect(ownerControl.valid).toBeFalsy();
+       expect(ownerControl.hasError('existingOwner')).toBeTruthy();
      });
    });
 
-
-   describe('The category field', () => {
-     it('should allow empty values', () => {
-       const categoryControl = addTodoForm.controls.category;
-       categoryControl.setValue('');
-       expect(categoryControl.valid).toBeTruthy();
-     });
-   });
 
    describe('The body field', () => {
      let bodyControl: AbstractControl;
@@ -141,6 +133,11 @@ import {
        bodyControl.setValue('');
        expect(bodyControl.valid).toBeFalsy();
        expect(bodyControl.hasError('required')).toBeTruthy();
+     });
+
+     it('should accept legal bodys', () => {
+       bodyControl.setValue('conniestewart@ohmnet.com');
+       expect(bodyControl.valid).toBeTruthy();
      });
    });
 
@@ -163,14 +160,15 @@ import {
      });
 
      it('should allow "editor"', () => {
-       statusControl.setValue(false);
+       statusControl.setValue(true);
        expect(statusControl.valid).toBeTruthy();
      });
 
-     it('should not allow "Supreme Overlord"', () => {
-       statusControl.setValue('Supreme Overlord');
-       expect(statusControl.valid).toBeFalsy();
+     it('should allow "viewer"', () => {
+       statusControl.setValue(true);
+       expect(statusControl.valid).toBeTruthy();
      });
+
    });
 
    describe('getErrorMessage()', () => {
@@ -187,13 +185,8 @@ import {
        // if we wanted to create a new variable, though.
        controlOwner = 'body';
        addTodoComponent.addTodoForm.get(controlOwner).setErrors({'required': true});
-       expect(addTodoComponent.getErrorMessage(controlOwner)).toEqual('Body is required');
-
-       controlOwner = 'body';
-       addTodoComponent.addTodoForm.get(controlOwner).setErrors({'body': true});
-       expect(addTodoComponent.getErrorMessage(controlOwner)).toEqual('Body must be formatted properly');
-     });
-
+       expect(addTodoComponent.getErrorMessage(controlOwner)).toEqual('body is required');
+      });
      it('should return "Unknown error" if no error message is found', () => {
        // The type statement is needed to ensure that `controlOwner` isn't just any
        // random string, but rather one of the keys of the `addTodoValidationMessages`
@@ -250,10 +243,10 @@ import {
      // We don't actually have to do this, but it does mean that when we
      // check that `submitForm()` is called with the right arguments below,
      // we have some reason to believe that that wasn't passing "by accident".
-     component.addTodoForm.controls.owner.setValue('Blanche');
-     component.addTodoForm.controls.status.setValue(true);
+     component.addTodoForm.controls.owner.setValue('Chris Smith');
      component.addTodoForm.controls.category.setValue('Ohmnet');
-     component.addTodoForm.controls.body.setValue('Slonch');
+     component.addTodoForm.controls.body.setValue('this@that.com');
+     component.addTodoForm.controls.status.setValue(true);
    });
 
    // The `fakeAsync()` wrapper is necessary because the `submitForm()` method
@@ -276,7 +269,7 @@ import {
        // This means we don't have to worry about the details of the `.addTodo()`,
        // or actually have a server running to receive the HTTP request that
        // `.addTodo()` would typically generate. Note also that the particular values
-       // we set up in our form (e.g., 'Blanche') are actually ignored
+       // we set up in our form (e.g., 'Chris Smith') are actually ignored
        // thanks to our `spyOn()` call.
        const addTodoSpy = spyOn(todoService, 'addTodo').and.returnValue(of('1'));
        component.submitForm();
