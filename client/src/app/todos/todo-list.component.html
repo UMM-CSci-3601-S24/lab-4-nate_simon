@@ -40,7 +40,7 @@
           </mat-form-field>
 
           </div>
-          
+
           <mat-form-field class="input-field">
             <mat-label>Status</mat-label>
             <mat-select (selectionChange)="getTodosFromServer()" [(ngModel)]="todoStatus" data-test="todoStatusSelect">
@@ -58,6 +58,13 @@
             <input matInput data-test="todoOwnerInput" placeholder="Filter by todos" min="0" max="200"
               [(ngModel)]="todoOwner" (input)="getTodosFromServer()">
             <mat-hint>Filtered on server</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field class="input-field">
+            <mat-label>Limit</mat-label>
+            <input matInput data-test="todoLimitInput" placeholder="Filter by limit" [(ngModel)]="todoLimit"
+              (input)="updateFilter()">
+            <mat-hint>Filtered on client</mat-hint>
           </mat-form-field>
 
 
