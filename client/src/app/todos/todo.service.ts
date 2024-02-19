@@ -57,24 +57,26 @@ export class TodoService {
    *  contacting a remote server over the Internet).
    */
   getTodos(filters?: { owner?: string; status?: boolean; category?: string; body?: string;}): Observable<Todo[]> {
-    // `HttpParams` is essentially just a map used to hold key-value
-    // pairs that are then encoded as "?key1=value1&key2=value2&…" in
-    // the URL when we make the call to `.get()` below.
-
-
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.owner) {
-        httpParams = httpParams.set(this.ownerKey, filters.owner)
+        httpParams = httpParams.set(this.ownerKey, filters.owner);
       }
+      if (filters.status !== undefined) {
+        httpParams = httpParams.set('status', filters.status);
+      }
+      if (filters.category) {
+        httpParams = httpParams.set(this.CategoryKey, filters.category);
+      }
+      if (filters.body) {
+        httpParams = httpParams.set('body', filters.body);
+      }
+      // Add other filters as needed...
     }
-    // Send the HTTP GET request with the given URL and parameters.
-    // That will return the desired `Observable<User[]>`.
     return this.httpClient.get<Todo[]>(this.todoUrl, {
       params: httpParams,
     });
   }
-
   /**
    * Get the `User` with the specified ID.
    *
@@ -86,16 +88,15 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
-  filterTodos(todos: Todo[], filters: {
-    limit: number; owner?: string; status?: boolean; category?: string; body?: string;
-    }): Todo[] {
+  filterTodos(todos: Todo[], filters: { limit?: number; owner?: string; status?: boolean; category?: string; body?: string;}): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
-    if (filters.owner) {
-      filters.owner = filters.owner.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
-    }
+    // if (filters.owner) {
+    //   filters.owner = filters.owner.toLowerCase();
+    //   filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    // }
+
 
     // Filter by body
     if (filters.body) {
@@ -109,6 +110,16 @@ export class TodoService {
       filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
     }
 
+    //Filter by status
+    if (filters.status !== undefined) {
+      filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
+    }
+
+
+    // Filter by limit
+    if (filters.limit) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
+    }
 
     // Filter by limit
     if (filters.limit) {

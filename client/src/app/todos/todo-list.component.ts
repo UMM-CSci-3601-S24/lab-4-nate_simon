@@ -19,7 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatCardModule } from '@angular/material/card';
 
 /**
- * A component that displays a list of users, either as a grid
+ * A component that displays a list of todos, either as a grid
  * of cards or as a vertical list.
  *
  * The component supports local filtering by name and/or company,
@@ -58,11 +58,11 @@ export class TodoListComponent implements OnInit, OnDestroy  {
 
 
   /**
-   * This constructor injects both an instance of `UserService`
+   * This constructor injects both an instance of `TodoService`
    * and an instance of `MatSnackBar` into this component.
    * `TodoService` lets us interact with the server.
    *
-   * @param TodoService the `TodoService` used to get users from the server
+   * @param TodoService the `TodoService` used to get todos from the server
    * @param snackBar the `MatSnackBar` used to display feedback
    */
   constructor(private todoService: TodoService, private snackBar: MatSnackBar) {
@@ -74,10 +74,10 @@ export class TodoListComponent implements OnInit, OnDestroy  {
    * in the GUI.
    */
   getTodosFromServer(): void {
-    // A user-list-component is paying attention to userService.getUsers
-    // (which is an Observable<User[]>)
+    // A todo-list-component is paying attention to todoService.getTodos
+    // (which is an Observable<Todo[]>)
     // (for more on Observable, see: https://reactivex.io/documentation/observable.html)
-    // and we are specifically watching for role and age whenever the User[] gets updated
+    // and we are specifically watching for role and age whenever the Todo[] gets updated
     this.todoService.getTodos({
 
       owner: this.todoOwner,
@@ -97,10 +97,10 @@ export class TodoListComponent implements OnInit, OnDestroy  {
     }).pipe(
       takeUntil(this.ngUnsubscribe)
     ).subscribe({
-      // Next time we see a change in the Observable<User[]>,
-      // refer to that User[] as returnedUsers here and do the steps in the {}
+      // Next time we see a change in the Observable<Todo[]>,
+      // refer to that Todo[] as returnedTodos here and do the steps in the {}
       next: (returnedTodos) => {
-        // First, update the array of serverFilteredUsers to be the User[] in the observable
+        // First, update the array of serverFilteredTodos to be the Todo[] in the observable
         this.serverFilteredTodos = returnedTodos;
         // Then update the filters for our client-side filtering as described in this method
         this.updateFilter();
@@ -119,13 +119,13 @@ export class TodoListComponent implements OnInit, OnDestroy  {
           { duration: 6000 });
       },
       // Once the observable has completed successfully
-      // complete: () => console.log('Users were filtered on the server')
+      // complete: () => console.log('Todos were filtered on the server')
     });
   }
 
   /**
    * Called when the filtering information is changed in the GUI so we can
-   * get an updated list of `filteredUsers`.
+   * get an updated list of `filteredTodos`.
    */
   public updateFilter(): void {
     this.filteredTodos = this.todoService.filterTodos(
@@ -133,7 +133,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
   }
 
   /**
-   * Starts an asynchronous operation to update the users list
+   * Starts an asynchronous operation to update the todos list
    *
    */
   ngOnInit(): void {
