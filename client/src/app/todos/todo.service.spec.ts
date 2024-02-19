@@ -156,47 +156,105 @@ describe('TodoService', () => {
       });
     });
 
-    // it('correctly calls api/todos with multiple filter parameters', () => {
-    //     const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
-    //     todoService.getTodos({ role: 'editor', company: 'IBM', age: 37 }).subscribe(() => {
-    //       // This test checks that the call to `todoService.getTodos()` does several things:
-    //       //   * It calls the mocked method (`HttpClient#get()`) exactly once.
-    //       //   * It calls it with the correct endpoint (`todoService.todoUrl`).
-    //       //   * It calls it with the correct parameters:
-    //       //      * There should be three parameters (this makes sure that there aren't extras).
-    //       //      * There should be a "role:editor" key-value pair.
-    //       //      * And a "company:IBM" pair.
-    //       //      * And a "age:37" pair.
+    it('correctly calls api/todos with filter parameter \'status\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
 
-    //       // This gets the arguments for the first (and in this case only) call to the `mockMethod`.
-    //       const [url, options] = mockedMethod.calls.argsFor(0);
-    //       // Gets the `HttpParams` from the options part of the call.
-    //       // `options.param` can return any of a broad number of types;
-    //       // it is in fact an instance of `HttpParams`, and I need to use
-    //       // that fact, so I'm casting it (the `as HttpParams` bit).
-    //       const calledHttpParams: HttpParams = (options.params) as HttpParams;
-    //       expect(mockedMethod)
-    //         .withContext('one call')
-    //         .toHaveBeenCalledTimes(1);
-    //       expect(url)
-    //         .withContext('talks to the correct endpoint')
-    //         .toEqual(todoService.todoUrl);
-    //       expect(calledHttpParams.keys().length)
-    //         .withContext('should have 3 params')
-    //         .toEqual(3);
-    //       expect(calledHttpParams.get('role'))
-    //         .withContext('role of editor')
-    //         .toEqual('editor');
-    //       expect(calledHttpParams.get('company'))
-    //         .withContext('company being IBM')
-    //         .toEqual('IBM');
-    //       expect(calledHttpParams.get('age'))
-    //         .withContext('age being 37')
-    //         .toEqual('37');
-    //     });
-    // });
+      todoService.getTodos({ status: true }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('status', true) });
+      });
+    });
+
+    it('correctly calls api/todos with filter parameter \'category\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+
+      todoService.getTodos({ category: 'video games' }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('category', 'video games') });
+      });
+    }
+    );
+
+    it('correctly calls api/todos with filter parameter \'body\'', () => {
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+      todoService.getTodos({ body: 'aslwernawlknawlktnlkt' }).subscribe(() => {
+        expect(mockedMethod)
+          .withContext('one call')
+          .toHaveBeenCalledTimes(1);
+        expect(mockedMethod)
+          .withContext('talks to the correct endpoint')
+          .toHaveBeenCalledWith(todoService.todoUrl, { params: new HttpParams().set('body', 'aslwernawlknawlktnlkt') });
+      });
+    }
+    );
+
+    it('correctly calls api/todos with multiple filter parameters', () => {
+        const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
+
+        todoService.getTodos({ status: true, category: 'IBM' }).subscribe(() => {
+          // This test checks that the call to `todoService.getTodos()` does several things:
+          //   * It calls the mocked method (`HttpClient#get()`) exactly once.
+          //   * It calls it with the correct endpoint (`todoService.todoUrl`).
+          //   * It calls it with the correct parameters:
+          //      * There should be three parameters (this makes sure that there aren't extras).
+          //      * There should be a "role:editor" key-value pair.
+          //      * And a "company:IBM" pair.
+          //      * And a "age:37" pair.
+
+          // This gets the arguments for the first (and in this case only) call to the `mockMethod`.
+          const [url, options] = mockedMethod.calls.argsFor(0);
+          // Gets the `HttpParams` from the options part of the call.
+          // `options.param` can return any of a broad number of types;
+          // it is in fact an instance of `HttpParams`, and I need to use
+          // that fact, so I'm casting it (the `as HttpParams` bit).
+          const calledHttpParams: HttpParams = (options.params) as HttpParams;
+          expect(mockedMethod)
+            .withContext('one call')
+            .toHaveBeenCalledTimes(1);
+          expect(url)
+            .withContext('talks to the correct endpoint')
+            .toEqual(todoService.todoUrl);
+          expect(calledHttpParams.keys().length)
+            .withContext('should have 3 params')
+            .toEqual(2);
+          expect(calledHttpParams.get('status'))
+            .withContext('role of editor')
+            .toEqual('true');
+          expect(calledHttpParams.get('category'))
+            .withContext('company being IBM')
+            .toEqual('IBM');
+        });
+    });
   });
+
+  describe('When getTodos() is called with a status filter', () => {
+    it('correctly forms the HTTP request', () => {
+      // Arrange
+      const filters = { status: true };
+      const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos)); // Declare the 'mockedMethod' variable
+
+      // Act
+      todoService.getTodos(filters).subscribe();
+
+      // Assert
+      const [url, options] = mockedMethod.calls.argsFor(0);
+      const calledHttpParams: HttpParams = (options.params) as HttpParams;
+      expect(mockedMethod).toHaveBeenCalledTimes(1);
+      expect(url).toEqual(todoService.todoUrl);
+      expect(calledHttpParams.get('status')).toEqual('true');
+    });
+  });
+
+
 
   describe('When getTodoById() is given an ID', () => {
    /* We really don't care what `getTodoById()` returns. Since all the
@@ -265,16 +323,16 @@ describe('TodoService', () => {
       });
     });
 
-    // it('filters by company', () => {
-    //   const todoCompany = 'UMM';
-    //   const filteredTodos = todoService.filterTodos(testTodos, { company: todoCompany });
-    //   // There should be just one todo that has UMM as their company.
-    //   expect(filteredTodos.length).toBe(1);
-    //   // Every returned todo's company should contain 'UMM'.
-    //   filteredTodos.forEach(todo => {
-    //     expect(todo.company.indexOf(todoCompany)).toBeGreaterThanOrEqual(0);
-    //   });
-    // });
+    it('filters by category', () => {
+      const todoCategory = 'UMM';
+      const filteredTodos = todoService.filterTodos(testTodos, { category: todoCategory });
+      // There should be just one todo that has UMM as their company.
+      expect(filteredTodos.length).toBe(0);
+      // Every returned todo's company should contain 'UMM'.
+      filteredTodos.forEach(todo => {
+        expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
+      });
+    });
 
   //   it('filters by owner and company', () => {
   //     // There's only one todo (Chris) whose owner
@@ -295,6 +353,7 @@ describe('TodoService', () => {
   //     });
   //   });
   // });
+
 
   describe('Adding a todo using `addTodo()`', () => {
     it('talks to the right endpoint and is called once', waitForAsync(() => {
