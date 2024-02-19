@@ -48,7 +48,16 @@
           </div>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-raised-button color="primary" type="submit">Submit</button>
+          <button
+          mat-button
+          type="button"
+          color="primary"
+          [disabled]="!addTodoForm.valid"
+          type="submit"
+          data-test="confirmAddTodoButton"
+          >
+          ADD TODO
+        </button>
         </mat-card-actions>
       </mat-card>
     </form>

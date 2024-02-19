@@ -4,7 +4,7 @@ export interface Todo {
   status: boolean;
   category: string;
   body: string;
-
+  
 
 }
 

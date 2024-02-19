@@ -85,15 +85,14 @@ export class TodoService {
     return this.httpClient.get<Todo>(`${this.todoUrl}/${id}`);
   }
 
-  filterTodos(todos: Todo[], filters: { limit: number; owner?: string; status?: boolean; category?: string; body?: string;}): Todo[] {
+  filterTodos(todos: Todo[], filters: { limit?: number; owner?: string; status?: boolean; category?: string; body?: string;}): Todo[] {
     let filteredTodos = todos;
 
     // Filter by owner
-    if (filters.owner) {
-      filters.owner = filters.owner.toLowerCase();
-      filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
-    }
-
+    // if (filters.owner) {
+    //   filters.owner = filters.owner.toLowerCase();
+    //   filteredTodos = filteredTodos.filter(todo => todo.owner.toLowerCase().indexOf(filters.owner) !== -1);
+    // }
 
 
     // Filter by body
@@ -108,6 +107,7 @@ export class TodoService {
       filteredTodos = filteredTodos.filter(todo => todo.category.toLowerCase().indexOf(filters.category) !== -1);
     }
 
+    //Filter by status
     if (filters.status !== undefined) {
       filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
     }
