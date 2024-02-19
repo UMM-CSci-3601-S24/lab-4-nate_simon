@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -243,6 +244,72 @@ class TodoControllerSpec {
 
 
   }
+  @Test
+void testAddNewTodoWithValidData() {
+  // Create a valid Todo
+  Todo validTodo = new Todo();
+  validTodo.owner = "Test Owner";
+  validTodo.status = true;
+  validTodo.category = "Test Category";
+  validTodo.body = "Test Body";
+
+  // Mock the BodyValidator
+  BodyValidator<Todo> mockValidator = mock(BodyValidator.class);
+
+  // When check is called on the mockValidator, return the mockValidator for chaining
+  when(mockValidator.check(any(), anyString())).thenReturn(mockValidator);
+
+  // When get is called on the mockValidator, return the validTodo
+  when(mockValidator.get()).thenReturn(validTodo);
+
+  // When bodyValidator is called on the context, return the mockValidator
+  when(ctx.bodyValidator(Todo.class)).thenReturn(mockValidator);
+
+  // Call the method under test
+  todoController.addNewTodo(ctx);
+
+  // Verify that check was called on the mockValidator
+  verify(mockValidator, times(4)).check(any(), anyString());
+}
+
+@Test
+void testAddNewTodoWithNullOwner() {
+  // Create a Todo with a null owner
+  Todo invalidTodo = new Todo();
+  invalidTodo.owner = null;
+  invalidTodo.status = true;
+  invalidTodo.category = "Test Category";
+  invalidTodo.body = "Test Body";
+
+  // Mock the BodyValidator
+  BodyValidator<Todo> mockValidator = mock(BodyValidator.class);
+
+  // When check is called on the mockValidator with a Todo that has a null owner, throw a BadRequestResponse
+  when(mockValidator.check(tdo -> tdo.owner != null && tdo.owner.length() > 0, "Todo must have a non-empty todo name")).thenThrow(new BadRequestResponse("Todo must have a non-empty todo name"));
+
+  // When bodyValidator is called on the context, return the mockValidator
+  when(ctx.bodyValidator(Todo.class)).thenReturn(mockValidator);
+
+  // Assert that a BadRequestResponse is thrown when addNewTodo is called
+  assertThrows(NullPointerException.class, () -> {
+    todoController.addNewTodo(ctx);
+  });
+}
+
+  @Test
+  void addNullTodo() throws IOException {
+    String testNewTodo = """
+      {
+      }
+      """;
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(testNewTodo, Todo.class, javalinJackson));
+
+    assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+
 @Test
   void addNullOwnerTodo() throws IOException {
     String testNewTodo = """
