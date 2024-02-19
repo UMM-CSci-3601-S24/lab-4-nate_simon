@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +45,8 @@ import io.javalin.http.HttpStatus;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
+import io.javalin.validation.ValidationException;
+import umm3601.todo.TodoController;
 
 /**
  * Tests the logic of the TodoController
@@ -236,8 +240,92 @@ class TodoControllerSpec {
     assertEquals("testers", addedTodo.get("category"));
     assertEquals("test@example.com", addedTodo.get("body"));
     assertEquals(true, addedTodo.get("status"));
+
+
+  }
+@Test
+  void addNullOwnerTodo() throws IOException {
+    String testNewTodo = """
+      {
+        "category": "testers",
+        "body": "test@example.com",
+        "status": true
+      }
+      """;
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(testNewTodo, Todo.class, javalinJackson));
+
+    assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+  @Test
+  void addNullStatusTodo() throws IOException {
+    String testNewTodo = """
+      {
+        "owner": "Test Owner",
+        "category": "testers",
+        "body": "test@example.com",
+      }
+      """;
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(testNewTodo, Todo.class, javalinJackson));
+
+    assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+  @Test
+  void addNullBodyTodo() throws IOException {
+    String testNewTodo = """
+      {
+        "owner": "Test Owner",
+        "category": "testers",
+        "status": true
+      }
+      """;
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(testNewTodo, Todo.class, javalinJackson));
+
+    assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
+  }
+  @Test
+  void addNullCategoryTodo() throws IOException {
+    String testNewTodo = """
+      {
+        "owner": "Test Owner",
+        "body": "slonch"
+        "status": true
+      }
+      """;
+    when(ctx.bodyValidator(Todo.class))
+        .then(value -> new BodyValidator<Todo>(testNewTodo, Todo.class, javalinJackson));
+
+    assertThrows(ValidationException.class, () -> {
+      todoController.addNewTodo(ctx);
+    });
   }
 
+
+  @Test
+  void canGetTodosWithOwnerLowercase() throws IOException {
+    Map<String, List<String>> queryParams = new HashMap<>();
+    queryParams.put(TodoController.OWNER_KEY, Arrays.asList(new String[] {"ohm"}));
+    when(ctx.queryParamMap()).thenReturn(queryParams);
+    when(ctx.queryParam(TodoController.OWNER_KEY)).thenReturn("ohm");
+
+    todoController.getTodos(ctx);
+
+    verify(ctx).json(todoArrayListCaptor.capture());
+    verify(ctx).status(HttpStatus.OK);
+
+    // Confirm that all the todos passed to `json` work for OHMNET.
+    for (Todo todo : todoArrayListCaptor.getValue()) {
+      assertEquals("OHMNET", todo.owner);
+    }
+  }
 
 
 }
