@@ -3,7 +3,6 @@ package umm3601.todo;
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -43,11 +42,9 @@ import io.javalin.Javalin;
 import io.javalin.http.BadRequestResponse;
 import io.javalin.http.Context;
 import io.javalin.http.HttpStatus;
-import io.javalin.http.NotFoundResponse;
 import io.javalin.json.JavalinJackson;
 import io.javalin.validation.BodyValidator;
 import io.javalin.validation.ValidationException;
-import umm3601.todo.TodoController;
 
 /**
  * Tests the logic of the TodoController
@@ -285,7 +282,8 @@ void testAddNewTodoWithNullOwner() {
   BodyValidator<Todo> mockValidator = mock(BodyValidator.class);
 
   // When check is called on the mockValidator with a Todo that has a null owner, throw a BadRequestResponse
-  when(mockValidator.check(tdo -> tdo.owner != null && tdo.owner.length() > 0, "Todo must have a non-empty todo name")).thenThrow(new BadRequestResponse("Todo must have a non-empty todo name"));
+  when(mockValidator.check(tdo -> tdo.owner != null && tdo.owner.length() > 0,
+  "Todo must have a non-empty todo name")).thenThrow(new BadRequestResponse("Todo must have a non-empty todo name"));
 
   // When bodyValidator is called on the context, return the mockValidator
   when(ctx.bodyValidator(Todo.class)).thenReturn(mockValidator);
