@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Todo  } from './todo';
 
+
 import { map } from 'rxjs/operators';
 
 
@@ -114,11 +115,11 @@ export class TodoService {
       filteredTodos = filteredTodos.filter(todo => todo.status === filters.status);
     }
 
-    // Filter by status
-    // if (filters.status) {
-    //   filters.status = filters.status.toLowerCase();
-    //   filteredTodos = filteredTodos.filter(todo => todo.status.toLowerCase().indexOf(filters.status) !== -1);
-    // }
+
+    // Filter by limit
+    if (filters.limit) {
+      filteredTodos = filteredTodos.slice(0, filters.limit);
+    }
 
     // Filter by limit
     if (filters.limit) {

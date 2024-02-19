@@ -48,6 +48,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
   public todoOwner: string;
   public limit: number;
 
+
   public viewType: 'card' | 'list' = 'card';
 
 
@@ -83,6 +84,7 @@ export class TodoListComponent implements OnInit, OnDestroy  {
       status: this.todoStatus,
       category: this.todoCategory,
       body: this.todoBody,
+
 
 
 
