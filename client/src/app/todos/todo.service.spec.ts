@@ -3,7 +3,6 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { TestBed, waitForAsync } from '@angular/core/testing';
 import { of } from 'rxjs';
 import { Todo } from './todo';
-
 import { TodoService } from './todo.service';
 
 describe('TodoService', () => {
@@ -38,7 +37,6 @@ describe('TodoService', () => {
   // These are used to mock the HTTP requests so that we (a) don't have to
   // have the server running and (b) we can check exactly which HTTP
   // requests were made to ensure that we're making the correct requests.
-
   let httpClient: HttpClient;
   let httpTestingController: HttpTestingController;
 
@@ -60,7 +58,6 @@ describe('TodoService', () => {
   });
 
   describe('When getTodos() is called with no parameters', () => {
-
    /* We really don't care what `getTodos()` returns. Since all the
     * filtering (when there is any) is happening on the server,
     * `getTodos()` is really just a "pass through" that returns whatever it receives,
@@ -190,7 +187,6 @@ describe('TodoService', () => {
     it('correctly calls api/todos with filter parameter \'body\'', () => {
       const mockedMethod = spyOn(httpClient, 'get').and.returnValue(of(testTodos));
       todoService.getTodos({ body: 'aslwernawlknawlktnlkt' }).subscribe(() => {
-
         expect(mockedMethod)
           .withContext('one call')
           .toHaveBeenCalledTimes(1);
@@ -276,7 +272,6 @@ describe('TodoService', () => {
     * about the returned value). Since we don't use the returned value in this test,
     * It might also be fine to not bother making the mock return it.
     */
-
     it('calls api/todos/id with the correct ID', waitForAsync(() => {
       // We're just picking a Todo "at random" from our little
       // set of Todos up at the top.
@@ -338,6 +333,30 @@ describe('TodoService', () => {
         expect(todo.category.indexOf(todoCategory)).toBeGreaterThanOrEqual(0);
       });
     });
+
+    it('filters by body', () => {
+      const todoBody = 'UMM';
+      const filteredTodos = todoService.filterTodos(testTodos, { body: todoBody });
+      // There should be just one todo that has UMM as their company.
+      expect(filteredTodos.length).toBe(0);
+      // Every returned todo's company should contain 'UMM'.
+      filteredTodos.forEach(todo => {
+        expect(todo.body.indexOf(todoBody)).toBeGreaterThanOrEqual(0);
+      });
+    });
+
+    it('filters by status', () => {
+      const todoStatus = true;
+      const filteredTodos = todoService.filterTodos(testTodos, { status: todoStatus });
+      // There should be just one todo that has UMM as their company.
+      expect(filteredTodos.length).toBe(1);
+      // Every returned todo's company should contain 'UMM'.
+      filteredTodos.forEach(todo => {
+        expect(todo.status).toBe(todoStatus);
+      });
+    }
+    );
+
 
   //   it('filters by owner and company', () => {
   //     // There's only one todo (Chris) whose owner
